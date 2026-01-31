@@ -1,0 +1,112 @@
+docker run -it --rm \ 
+-e POSTGRES_USER="root" \ 
+-e POSTGRES_PASSWORD="root" \ 
+-e POSTGRES_DB="ny_taxi" \ 
+-v ny_taxi_postgres_data:/var/lib/postgresql \ 
+-p 5432:5432 \ 
+postgres:18
+
+docker run -it --rm -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v ny_taxi_postgres_data:/var/lib/postgresql -p 5432:5432 postgres:18
+
+$env:TZ = 'Asia/Kolkata'
+uv run pgcli -h localhost -p 5432 -u root -d ny_taxi
+\dt : shows all the tables
+CREATE TABLE test (id INTEGER, name VARCHAR(50));
+
+root@localhost:ny_taxi> \dt
++--------+------+-------+-------+
+| Schema | Name | Type  | Owner |
+|--------+------+-------+-------|
+| public | test | table | root  |
++--------+------+-------+-------+
+SELECT 1
+Time: 0.005s
+
+INSERT INTO test VALUES(1,'DockerXPostgres');
+SELECT * FROM test;
+
+root@localhost:ny_taxi> SELECT * FROM test;
++----+-----------------+
+| id | name            |
+|----+-----------------|
+| 1  | DockerXPostgres |
++----+-----------------+
+SELECT 1
+Time: 0.004s
+
+uv run jupyter notebook
+
+https://github.com/DataTalksClub/nyc-tlc-data/releases/tag/yellow
+-- 2021-01
+
+SQLAlchemy is a powerful Python SQL toolkit and Object-Relational Mapper (ORM) that provides a flexible and efficient way for Python programs to communicate with relational databases. It allows developers to interact with database records using Python objects and classes instead of writing raw or repetitive SQL queries. 
+
+why parquest over csv?
+
+
+why do we need chunks in ingestion pipeline?
+to know the progress and make sub-processes
+
+SELECT COUNT(1) FROM yellow_taxi_data;
+
+jupyter nbconvert --to=script notebook.ipynb
+
+DROP TABLE IF EXISTS yellow_taxi_data;
+
+The click library in Python is used to create robust, user-friendly, and composable Command Line Interfaces (CLIs) with a minimal amount of code. It simplifies the process of building tools that can be run from the terminal, such as automation scripts, data processing utilities, and application management tools. 
+
+uv run python ingest_pipeline.py \
+ --pg-user=root \
+ --pg-pass=root \
+ --pg-host=localhost \
+ --pg-port=5432 \
+ --pg-db=ny_taxi \
+ --target-table=yellow_taxi_data_2021_1 \
+ --year=2021 \
+ --month=1 \
+ --chunksize=100000
+
+uv run python ingest_pipeline.py --pg-user=root --pg-pass=root --pg-host=localhost --pg-port=5432 --pg-db=ny_taxi --target-table=yellow_taxi_data_2021_1 --year=2021 --month=1 --chunksize=100000
+
+docker build -t taxi_ingest:v001 .
+docker run -it --rm taxi_ingest:v001 --pg-user=root --pg-pass=root --pg-host=localhost --pg-port=5432 --pg-db=ny_taxi --target-table=yellow_taxi_data_2021_1_img --year=2021 --month=1 --chunksize=100000
+the above cmd wont run as the port 5432 is not running inside the container of taxi_ingest
+
+docker network ls
+docker network create pg-network
+docker network ls
+
+pg-network                bridge    local
+
+docker run -it --rm -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v ny_taxi_postgres_data:/var/lib/postgresql -p 5432:5432 --network=pg-network --name pgdatabase postgres:18
+
+# --name is required to know the host name to connect with the db
+
+docker build -t taxi_ingest:v001 .
+
+docker run -it --rm  --network=pg-network taxi_ingest:v001 --pg-user=root --pg-pass=root --pg-host=pgdatabase --pg-port=5432 --pg-db=ny_taxi --target-table=yellow_taxi_data_2021_1 --year=2021 --month=1 --chunksize=100000
+
+docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PASSWORD="root" -v pgadmin_data:/var/lib/pgadmin -p 8085:80 --network=pg-network --name pgadmin dpage/pgadmin4
+
+http://localhost:8085/browser/
+
+docker-compose up
+
+# docker compose create a default n/w with the name foldername_default 
+docker run -it --rm  --network=module1_default taxi_ingest:v001 --pg-user=root --pg-pass=root --pg-host=pgdatabase --pg-port=5432 --pg-db=ny_taxi --target-table=yellow_taxi_data_2021_1 --year=2021 --month=1 --chunksize=100000
+
+# we could add the ingestion pipeline in the docker-compose.yaml file
+
+docker-compose down
+
+TERRAFORM
+HashiCorp Terraform is an infrastructure as code tool that lets us defined both cloud and on-prem resources in human readable configuration files that we can version, re-use and share. We can then use a consistent workflow to provision and manage all of our infrastructure throughout its lifecycle.
+
+Infrastructure as code
+Local Machine(Terraform) <=> {GCP, AWS, Azure}
+
+Key Terraform Commands:
+init : get me the providers I need
+plan : what I am about to do!
+apply : do what is in the tf files
+destroy : remove everything defined in the tf files

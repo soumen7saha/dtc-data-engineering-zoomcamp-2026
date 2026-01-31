@@ -1,7 +1,6 @@
 .DS_Store
 .ipynb_checkpoints
 ps.txt
-notes.txt
 __pycache__
 .devcontainer
 .gitattributes
