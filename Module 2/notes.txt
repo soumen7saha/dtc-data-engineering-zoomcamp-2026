@@ -1,0 +1,24 @@
+Kestra - Workflow Orchestration Tool
+Kestra is an opensource infinitely scalable workchestration platform. 
+    It has humongous extension library. 
+    Language Agnostic.
+    Full Obserbabaility and detailed logging
+    Triggers Workflows automatically
+
+Workflow Orchestration : Ensures each of the work are in unison
+
+docker compose up -d
+
+Backfills & Scheduling:
+
+
+ETL vs ETL
+
+commands:
+      - |
+         wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{inputs.taxi}}/{{render(vars.file)}}.gz \ | gunzip > {{render(vars.file)}}
+
+      - |
+        SIZE=$(stat -c%s {{render(vars.file)}})
+        SIZE_MIB=$(( SIZE / 1024 / 1024 ))
+        echo "Extracted file size (MiB): $SIZE_MIB"
