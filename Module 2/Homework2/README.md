@@ -8,7 +8,7 @@
 - 364.7 MiB
 - 692.6 MiB
 
-[Alt text](images/1.png)
+![](images/1.png)
 __128.3 MiB__
 
 2) What is the rendered value of the variable `file` when the inputs `taxi` is set to `green`, `year` is set to `2020`, and `month` is set to `04` during execution?
@@ -25,7 +25,7 @@ __green_tripdata_2020-04.csv__
 - 18,324,219
 - 29,430,127
 
-[Alt text](images/3.png)
+![](images/3.png)
 __24,648,499__
 
 4) How many rows are there for the `Green` Taxi data for all CSV files in the year 2020?
@@ -34,7 +34,7 @@ __24,648,499__
 - 1,734,051
 - 1,342,034
 
-[Alt text](images/4.png)
+![](images/4.png)
 __1,734,051__
 
 5) How many rows are there for the `Yellow` Taxi data for the March 2021 CSV file?
@@ -43,7 +43,7 @@ __1,734,051__
 - 1,925,152
 - 2,561,031
 
-[Alt text](images/5.png)
+![](images/5.png)
 __1,925,152__
 
 6) How would you configure the timezone to New York in a Schedule trigger?
