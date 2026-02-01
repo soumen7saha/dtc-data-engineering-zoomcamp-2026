@@ -1,0 +1,109 @@
+Data Warehouse
+OLAP vs OLTP
+BigQuery
+
+OLTP: 
+    Purpose - Control and run essential business operations in real time
+    Data Updates - Short, fast updates initiated by user
+    Database design - Normalized database for efficiency
+    Space requirements - Generally small if historical data is archived
+    Backup and recovery - Regular backups required to ensure business continuity and meet legal and governance requirements
+    Productivity - Increases productivity of end users
+    Data view - Lists day-to-day business transactions
+    User examples - Customer-facing personel, clers, online shoppers
+OLAP:
+    Purpose - Plan, solve problems, suppor decisions, discover hidden insights
+    Data updates - Data periodically refreshed with scheduled, long-running batch jobs
+    Database design - Denormalized databases for analysis
+    Space requirements - Generally large due to aggregating large datasets
+    Backup and recovery - Lost data can be reloaded from OLTP database as needed in lieu of regular backups
+    Productivity - Increases productivity of business managers, data analysts, and executives
+    Data view - Multi-dimensional view of enterprose data
+    User examples - Knowledge workers such as data analysis, business analysts, and executives
+
+Data Warehouse is an OLAP solution, used for reporting and data analysis
+
+BigQuery
+    - Serverless data warehouse
+    - Software as well as infrastructure : scalability and high-availability
+    - Maximizes flexibility by separating the compute engine that analyzes data from the storage
+
+CREATE OR REPLACE EXTERNAL TABLE 'taxi-rides-ny.nytaxi.external_yellow_tripdata'
+OPTIONS(
+    format = 'CSV',
+    urls = ['gs://nyc-tl-data/trip data/yellow_tripdata_2019-*.csv',
+            'gs://nyc-tl-data/trip data/yellow_tripdata_2020-*.csv'
+           ]
+)
+
+Partitioning in BigQuery:
+CREATE OR REPLACE TABLE taxi-rides-ny.nytaxi.yellow_tripdata_non_partitioned AS
+SELECT * FROM taxi-rides-ny.nytaxi.external_yellow_tripdata;
+
+CREATE OR REPLACE TABLE taxi-rides-ny.nytaxi.yellow_tripdata_partitioned
+PARTITION BY
+    DATE(tpep_pickup_datetime) AS
+SELECT * FROM taxi-rides-ny.nytaxi.external_yellow_tripdata;
+
+Partitioned & Non-partioned tables have different icons in BigQuery
+When selected the query in the editor but nor run, it shows the approx. amount of data to be processed (in size)
+
+Clustering in BigQuery:
+CREATE OR REPLACE TABLE taxi-rides-ny.nytaxi.yellow_tripdata_partitioned_clustered
+PARTITION BY DATE(tpep_pickup_datetime)
+CLUSTER BY VendorId AS
+SELECT * FROM taxi-rides-ny.nytaxi.external_yellow_tripdata;
+
+Number of Partitions limit is 4K
+Tables with data size <1GB do not show significant improvement with Partitioning and Clustering
+We can specify upto four clustering columns
+Clustering columns must be top-level, non-repeated columns
+
+When to use clustering:
+    - Cost benefit is unknown
+    - We need more granularity than partitioning alone allows
+    - Queries commonly use filters or aggregation against multiple particular columns
+    - The cardinality of the number of values in a columsn or group of columns is large
+
+When to use Partitioning:
+    - Cost is known upfront
+    - To filter or aggregate on single columns
+
+Clustering over partitioning???
+
+Automatic Reclustering:
+To maintain the performance characteristics of a clustered table, BigQuery performs automatic re-clustering in the background to restore the sort property of the table. For partitioned tables, clustering is maintained for data within the scope of each partion.
+
+BigQuery Best Practices:
+    1. Cost Reduction
+        - Avoid SELECT *
+        - Proce your queries before running them
+        - Use clustered or partioned tables
+        - Use streaming inserts with caution
+        - Materialize query results in stages
+    2. Quey performance
+        - Filter on partioned columns
+        - Denormalize the data
+        - Use nested or repeated columns
+        - Use external data sources appropiately
+        - Reduce data before a JOIN
+        - Do not treat WITH clauses as prepared statements
+        - Avoid oversharding tables
+        - Avoid JS user-defined functions
+        - Use appropiate aggregation functions (HyperLogLog++)
+        - Order Last, for query operations to maximize performance
+        - Optimize join patterns
+        - Place the table with the largest number of rowsfirst, then place the remaining tables by decreasing size
+
+BigQuery ML:
+
+Data Preprocessing iN BigQuery
+1. Automatic Preprocessing
+2. Manual Preprocessing
+
+ML Prediction
+1. Create an ml Table
+2. Create the Model
+3. Hyperparameter tune the Model
+4. Evaluate the Model
+5. Deploy the Model
