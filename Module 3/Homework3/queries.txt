@@ -1,0 +1,49 @@
+-- external table
+CREATE OR REPLACE EXTERNAL TABLE 
+`project_id.2024_yellow_taxi_data.external_yellow_tripdata`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://dez_hw3_2026_sm/*.parquet']
+);
+
+-- regular table
+CREATE OR REPLACE TABLE 
+`project_id.2024_yellow_taxi_data.regular_yellow_tripdata`
+AS
+SELECT * FROM 
+`project_id.2024_yellow_taxi_data.external_yellow_tripdata`;
+
+-- 1. count : 20332093
+SELECT COUNT(1) FROM 
+`project_id.2024_yellow_taxi_data.external_yellow_tripdata`;
+
+SELECT COUNT(1) FROM 
+`project_id.2024_yellow_taxi_data.regular_yellow_tripdata`;
+
+-- 2. estimated data : 0 & 155.12 MB
+SELECT COUNT(DISTINCT(PULocationID)) FROM
+`project_id.2024_yellow_taxi_data.external_yellow_tripdata`;
+
+SELECT COUNT(DISTINCT(PULocationID)) FROM
+`project_id.2024_yellow_taxi_data.regular_yellow_tripdata`;
+
+-- 4. fare == 0
+SELECT COUNT(1) FROM 
+`project_id.2024_yellow_taxi_data.regular_yellow_tripdata`
+WHERE fare_amount = 0;
+
+-- 5. clustered table
+CREATE OR REPLACE TABLE 
+`project_id.2024_yellow_taxi_data.partitioned_clustered_yellow_tripdata`
+PARTITION BY DATE(tpep_dropoff_datetime) CLUSTER BY VendorId AS
+SELECT * FROM `project_id.2024_yellow_taxi_data.external_yellow_tripdata`;
+
+-- 6. estimated bytes : 310.24 MB & 26.84 MB
+SELECT DISTINCT(VendorID) FROM 
+`project_id.2024_yellow_taxi_data.regular_yellow_tripdata`
+WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
+
+SELECT DISTINCT(VendorID) FROM 
+`project_id.2024_yellow_taxi_data.partitioned_clustered_yellow_tripdata`
+WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
+
