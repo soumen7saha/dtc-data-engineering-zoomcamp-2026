@@ -24,6 +24,8 @@
 
    ```
    SELECT COUNT(DISTINCT(PULocationID)) FROM `project_id.2024_yellow_taxi_data.external_yellow_tripdata`;
+
+   SELECT COUNT(DISTINCT(PULocationID)) FROM `project_id.2024_yellow_taxi_data.regular_yellow_tripdata`;
    ```
 
 3. Why are the estimated number of Bytes different?
