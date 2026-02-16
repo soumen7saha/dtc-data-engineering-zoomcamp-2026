@@ -1,0 +1,113 @@
+dbt : a transformational workflow that allows anyone who knows sql to deploy analytics code following software engineering best practices like modularity, CI/CD, portability and documentation.
+
+dbt features include:
+    Version-controlled transformations: dbt enables version control for all transformations, making it easy to track changes and collaborate across teams. This ensures data transformations are organized and consistent​.
+    
+    Automation and scheduling: With dbt, you can automate transformation processes, ensuring that the most up-to-date data is always available for analysis. This fits perfectly within an ELT workflow, where transformation happens after the data is already in the warehouse​.
+    
+    Comprehensive testing: dbt offers built-in testing capabilities to validate transformations, ensuring data quality and integrity throughout the ELT process​.
+
+Data sourcs -> loaders -> data platforms -> dbt -> bi tools -> ml models/bi models
+
+analytics development lifecycle : ADLC
+... plan -> develop -> test -> deploy -> operate -> observe -> discover -> analyze -> ...
+plan to deploy = data
+operate to analyze = ops
+
+dbt project structure
+    1. analytics folder
+        stores sql files that should not be exposed
+    2. dbt_project.yml
+        most impotant file in dbt
+        tell dbt about the defaults
+        used to run commands
+        for dbt core, your profile should match the one in the .dbt/profile.yml
+    3. macros folder
+        they behave like python functions
+        helps to encapsulates logic in one place 
+        used for conversions
+    4. README.md
+        installation & setup
+        project documentation
+    5. seeds folder
+        csv and flat files (added to dbt)
+    6. snapshots folder
+        pictures of tables at certain point of time
+        useful to track the history of a column that overwrites itself
+    7. tests folder
+        a place to put assertions in sql format
+        a place for singular tests
+
+    8. models folder
+        i. staging
+            sources (raw tables from db)
+            staging files : 1 to 1 copy of data with minimal cleaning steps
+        ii. intermediate
+            anything that is not raw or to be exposed
+            no guidelines, just nice for heavy duty cleaning or complex logic
+        iii. marts
+            tables ready for dashboards
+            properly modeled, clean tables
+            data to be exposed to the end users
+            if the data is in marts, it is ready for consumption
+
+
+Each model is :
+    a sql file
+    select stmts no DDL & DML
+    a file that dbt will compile in our data warehouse(dwh)
+    
+dbt cloud or dbt core
+
+bigQuery or Postgres
+
+cloud.getdbt.com
+dbt_project.yml
+profiles.yml
+
+modular data modelling
+
+several materialization strategies:
+    Table : tables are physical representations of data that are created and stored in the db
+    View : virtual tables are created by dbt that can be queried like regular tables
+    Incremental : incremental materializations are powerful feature of dbt that allows for efficient updates to existing tables, reducing the need for full data refreshes
+    Ephimeral : ephimeral materializations are temporary and exist only for the duration of a single dbt run
+
+my_model.sql (dbt model)
+{{
+    config(materialized='table')
+}}
+    
+Select * 
+from staging.source_table
+where ecord_state = 'ACTIVE';
+
+--> dbt runs the below compiled code in the dwh
+Create table my_schema.my_model as (
+    Select *
+    from staging.source_table
+    where ecord_state = 'ACTIVE'
+)
+
+________________________________________
+
+from clause of a dbt model
+    sources : sources of our models
+    seeds : csv files stored in the seeds folder
+    ref : 
+
+schema/db = dataset in BigQuery
+create table `project_id.dataset_name.table_name` as 
+select * from `bigquey-publc-data.new_york_taxi_trips.tlc_green_trips_2009`;
+insert into `project_id.dataset_name.table_name`
+select * from `bigquey-publc-data.new_york_taxi_trips.tlc_green_trips_2010`;
+
+Macros:
+    use if statement and for loops in sql
+    like template system in Flask
+
+packages.yml
+
+dbt tests
+
+

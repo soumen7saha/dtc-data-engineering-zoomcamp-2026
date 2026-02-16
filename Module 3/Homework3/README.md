@@ -24,6 +24,8 @@
 
    ```
    SELECT COUNT(DISTINCT(PULocationID)) FROM `project_id.2024_yellow_taxi_data.external_yellow_tripdata`;
+
+   SELECT COUNT(DISTINCT(PULocationID)) FROM `project_id.2024_yellow_taxi_data.regular_yellow_tripdata`;
    ```
 
 3. Why are the estimated number of Bytes different?
@@ -36,7 +38,7 @@
    SELECT COUNT(1) FROM `project_id.2024_yellow_taxi_data.regular_yellow_tripdata` WHERE fare_amount = 0;
    ```
 
-5. What is the best strategy to make an optimized table in Big Query if your query will always filter based on tpep_dropoff_datetime and order the results by VendorID ?
+5. What is the best strategy to make an optimized table in Big Query if your query will always filter based on tpep_dropoff_datetime and order the results by VendorID?
    - Partition by tpep_dropoff_datetime and Cluster on VendorID
 
    ```
@@ -57,8 +59,8 @@
    WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
    ```
 
-7. Where is the data stored in the External Table you created? (1 point)
+7. Where is the data stored in the External Table you created?
    - GCP Bucket
 
-8. It is best practice in Big Query to always cluster your data: (1 point)
+8. It is best practice in Big Query to always cluster your data:
    - True

@@ -7,4 +7,6 @@ __pycache__
 .venv
 gcs.json
 *.parquet
+uv.lock
+
 
